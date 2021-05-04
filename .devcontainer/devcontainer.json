@@ -1,0 +1,31 @@
+{
+    "name": "CodeIgniter3",
+    "service": "workspace",
+    "containerUser": "vscoder",
+    "remoteUser": "vscoder",
+    "shutdownAction": "stopCompose",
+    "workspaceFolder": "/aspa-enrollment-form",
+    "dockerComposeFile": "../docker-compose.yml",
+    "postCreateCommand": [
+        "sudo chown -R vscoder:vscoder /aspa-enrollment-form",
+        "sudo chown -R vscoder:vscoder /home/vscoder/",
+        "composer global require \"squizlabs/php_codesniffer=*\""
+    ],
+
+    "extensions": [
+        "bmewburn.vscode-intelephense-client",
+        "eamodio.gitlens",
+        "EditorConfig.EditorConfig",
+        "mikestead.dotenv",
+        "ms-azuretools.vscode-docker",
+        "onecentlin.laravel-blade",
+        "redhat.vscode-yaml",
+        "wongjn.php-sniffer"
+    ],
+
+    "settings": {
+        "phpSniffer.executablesFolder": "./vendor/bin/",
+        "phpSniffer.run": "onSave",
+        "terminal.integrated.shell.linux": "/bin/bash"
+    }
+}

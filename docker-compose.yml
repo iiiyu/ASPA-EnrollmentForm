@@ -1,31 +1,52 @@
 version: "3.7"
-
 services:
-  php-httpd:
-    build: .
+  workspace:
+    build: .devcontainer/services/workspace
+    environment:
+      COMPOSER_MEMORY_LIMIT: -1
+    links:
+      - db
+    volumes:
+      - .:/aspa-enrollment-form
+      - ~/.ssh:/home/vscoder/.ssh:ro
+      - composer:/home/vscoder/.composer
+      - vs-code:/home/vscoder/.vscode-server
+  php-fpm:
+    build: .devcontainer/services/php-fpm
+    volumes:
+      - .:/aspa-enrollment-form
+    depends_on:
+      - workspace
+  nginx:
+    build: .devcontainer/services/nginx
+    depends_on:
+      - php-fpm
+    volumes:
+      - .:/aspa-enrollment-form
     ports:
       - 80:80
-    volumes:
-      - ".:/var/www/html"
-
-  mariadb:
-    image: mariadb:10.5.2
-    volumes:
-      - mariadb-volume:/var/lib/mysql
+  db:
+    image: mariadb:latest
     environment:
-      TZ: "Europe/Rome"
-      MYSQL_ALLOW_EMPTY_PASSWORD: "no"
-      MYSQL_ROOT_PASSWORD: "rootpwd"
-      MYSQL_USER: "testuser"
-      MYSQL_PASSWORD: "testpassword"
-      MYSQL_DATABASE: "testdb"
-
+      MYSQL_USER: test_user
+      MYSQL_PASSWORD: test_user_password
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: aspa_enrollment_form_test_db
+    volumes:
+      - db-data:/var/lib/mariad
+    ports:
+      - 3306:3306
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     links:
-      - "mariadb:db"
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+    restart: always
     ports:
-      - 8081:80
-
+      - 8183:80
 volumes:
-  mariadb-volume:
+  composer:
+  vs-code:
+  db-data:
